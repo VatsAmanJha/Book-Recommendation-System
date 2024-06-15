@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendations</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card {
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center mb-3">Book Recommendations</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-center mb-3">Select a Book from Popular List</h3>
+                <select class="form-control mb-3" id="popularBooks">
+                    <!-- Options will be populated using JavaScript -->
+                </select>
+                <button class="btn btn-primary btn-block" onclick="getRecommendations()">Get Recommendations</button>
+            </div>
+        </div>
+        <div class="row mt-4" id="recommendedBooks">
+            <!-- Recommended books will be populated using JavaScript -->
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Populate popular books dropdown
+        $(document).ready(function () {
+            $.get("http://127.0.0.1:8000/popular_df", function (data) {
+                data.forEach(function (book) {
+                    $("#popularBooks").append(`<option value="${book['Book-Title']}">${book['Book-Title']}</option>`);
+                });
+            });
+        });
+
+        // Function to get recommendations
+        function getRecommendations() {
+            var selectedBook = $("#popularBooks").val();
+            if (selectedBook !== '') {
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:8000/recommendations/",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "book_name": selectedBook
+                    }),
+                    success: function (data) {
+                        $("#recommendedBooks").empty();
+                        data.forEach(function (book) {
+                            $("#recommendedBooks").append(`
+                                <div class="col-md-3 mb-3">
+                                    <div class="card">
+                                        <img src="${book['Image-URL-M']}" class="card-img-top" alt="Book Image">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${book['Book-Title']}</h5>
+                                            <p class="card-text">Author: ${book['Book-Author']}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    },
+                    error: function () {
+                        alert("Error fetching recommendations.");
+                    }
+                });
+            } else {
+                alert("Please select a book.");
+            }
+        }
+    </script>
+</body>
+
+</html>
