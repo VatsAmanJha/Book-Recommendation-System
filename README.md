@@ -45,18 +45,13 @@ To set up the project, follow these steps:
 ## Usage
 
 1. **Prepare the Dataset**: Ensure that the dataset files (`Books.csv`, `Ratings.csv`, `Users.csv`) are in the project directory.
-
-2. **Run the Recommendation System Script**: 
-   ```bash
-   python recommend.py
-   ```
-
-3. **Start the FastAPI Server**: 
+   
+2. **Start the FastAPI Server**: 
    ```bash
    uvicorn main:app --reload
    ```
 
-4. **Access the Web Interface**: Open `index.html` in your browser to interact with the recommendation system.
+3. **Access the Web Interface**: Open `index.html` in your browser to interact with the recommendation system.
 
 ## API Endpoints
 
